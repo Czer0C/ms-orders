@@ -18,9 +18,6 @@ const HOST = process.env.HOST_AUTH || 'auth-service';
 const VALIDATE_ENDPOINT = `http://${HOST}:3002/auth/validate`;
 
 console.log(process.env.HOST_AUTH, { VALIDATE_ENDPOINT });
-
-// const VALIDATE_ENDPOINT = 'http://auth-service:3002/auth/validate';
-
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {
   // constructor(private jwtService: JwtService) {}

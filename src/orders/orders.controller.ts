@@ -39,7 +39,7 @@ export class OrdersController {
   ): Promise<Order | null> {
     const user = req['user'];
 
-    return this.ordersService.findOne(id, user);
+    return this.ordersService.findOne(id);
   }
 
   @Put(':id')
@@ -61,7 +61,9 @@ export class OrdersController {
   }
 
   @Put(':id/pay')
-  async complete(@Param('id') id: number): Promise<Order | null> {
-    return this.ordersService.pay(id);
+  async complete(@Param('id') id: number,@Req() req: Request): Promise<Order | null> {
+    const token = req.headers['authorization'];
+
+    return this.ordersService.pay(id, token);
   }
 }

@@ -10,9 +10,7 @@ export class OrdersService {
     private ordersRepository: Repository<Order>,
   ) {}
 
-  async create(orderData: Partial<Order>, user): Promise<Order> {
-    // console.log({ user });
-
+  async create(orderData: Partial<Order>): Promise<Order> {
     const order = this.ordersRepository.create(orderData);
 
     return this.ordersRepository.save(order);
@@ -34,6 +32,10 @@ export class OrdersService {
 
   async remove(id: number): Promise<void> {
     await this.ordersRepository.delete(id);
+  }
+
+  async removeMany(ids: number[]): Promise<void> {
+    await this.ordersRepository.delete(ids);
   }
 
   async pay(id: number): Promise<Order | null> {

@@ -33,10 +33,10 @@ export class AuthMiddleware implements NestMiddleware {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      if (!response.data.valid)
+      if (!response.data.username)
         throw new UnauthorizedException('Invalid token');
 
-      req['user'] = response?.data?.user;
+      req['user'] = response?.data;
 
       next();
     } catch (error) {

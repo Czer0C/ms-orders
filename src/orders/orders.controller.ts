@@ -22,7 +22,9 @@ export class OrdersController {
   ): Promise<Order> {
     const user = req['user']; // Retrieved from AuthMiddleware
 
-    return this.ordersService.create(orderData, user);
+    orderData.createdBy = user.username || 'unknown';
+
+    return this.ordersService.create(orderData);
   }
 
   @Get()
@@ -41,6 +43,11 @@ export class OrdersController {
     @Body() orderData: Partial<Order>,
   ): Promise<Order | null> {
     return this.ordersService.update(id, orderData);
+  }
+
+  @Delete('/many')
+  async removeMany(@Body() ids: number[]): Promise<void> {
+    return this.ordersService.removeMany(ids);
   }
 
   @Delete(':id')

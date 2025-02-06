@@ -20,8 +20,12 @@ export class OrdersService {
     return this.ordersRepository.find();
   }
 
-  async findOne(id: number): Promise<Order | null> {
-    return this.ordersRepository.findOne({ where: { id } });
+  async findOne(id: number, ...rest: any): Promise<Order | null> {
+    const user = rest[0];
+
+    return this.ordersRepository.findOne({
+      where: { id, createdBy: user.username },
+    });
   }
 
   async update(id: number, orderData: Partial<Order>): Promise<Order | null> {

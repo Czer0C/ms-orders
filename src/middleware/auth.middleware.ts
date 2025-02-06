@@ -13,9 +13,11 @@ dotenv.config();
 
 //auth-service in docker
 
-const HOST = process.env.HOST || 'auth-service';
+const HOST = process.env.HOST_AUTH || 'auth-service';
 
 const VALIDATE_ENDPOINT = `http://${HOST}:3002/auth/validate`;
+
+console.log(process.env.HOST_AUTH, { VALIDATE_ENDPOINT });
 
 // const VALIDATE_ENDPOINT = 'http://auth-service:3002/auth/validate';
 

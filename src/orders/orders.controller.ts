@@ -1,15 +1,15 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Param,
+  Post,
   Put,
   Req,
 } from '@nestjs/common';
-import { OrdersService } from './orders.service';
 import { Order } from './entities/order.entity';
+import { OrdersService } from './orders.service';
 
 @Controller('orders')
 export class OrdersController {
@@ -33,8 +33,13 @@ export class OrdersController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: number): Promise<Order | null> {
-    return this.ordersService.findOne(id);
+  async findOne(
+    @Param('id') id: number,
+    @Req() req: Request,
+  ): Promise<Order | null> {
+    const user = req['user'];
+
+    return this.ordersService.findOne(id, user);
   }
 
   @Put(':id')

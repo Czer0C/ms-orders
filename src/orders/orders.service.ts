@@ -1,13 +1,15 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Order } from './entities/order.entity';
 import * as dotenv from 'dotenv';
 import axios from 'axios';
 
+import { ClientKafka } from '@nestjs/microservices';
+
 dotenv.config();
 
-const HOST_INVENTORY = process.env.HOST_INVENTORY || 'localhost'
+const HOST_INVENTORY = process.env.HOST_INVENTORY || 'localhost';
 
 const UPDATE_INVENTORY = `http://${HOST_INVENTORY}:3004/inventory`;
 
@@ -17,10 +19,14 @@ export class OrdersService {
   constructor(
     @InjectRepository(Order)
     private ordersRepository: Repository<Order>,
+    @Inject('KAFKA_SERVICE')
+    private kafkaClient: ClientKafka,
   ) {}
 
   async create(orderData: Partial<Order>): Promise<Order> {
     const order = this.ordersRepository.create(orderData);
+
+    await this.kafkaClient.emit('orders', { value: JSON.stringify(order) });
 
     return this.ordersRepository.save(order);
   }
@@ -53,7 +59,7 @@ export class OrdersService {
   async pay(id: number, token: string): Promise<Order | null> {
     await this.ordersRepository.update(id, { status: 'completed' });
 
-    const order = await this.findOne(id)
+    const order = await this.findOne(id);
 
     const url = `${UPDATE_INVENTORY}/${order?.product}`;
 
